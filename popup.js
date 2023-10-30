@@ -16,3 +16,18 @@ document.getElementById('detailsBtn').addEventListener('click', () => {
     chrome.tabs.create({ url: 'details.html' });
 });
 
+document.getElementById('resetBtn').addEventListener('click', () => {
+    if (confirm("Are you sure you want to reset all data?")) {
+        chrome.storage.local.remove(["siteCount", "linkCount"], () => {
+            if (chrome.runtime.lastError) {
+                console.error("Error during reset:", chrome.runtime.lastError);
+            } else {
+                console.log("Data reset successfully");
+            }
+        });
+        document.getElementById('siteCount').textContent = 0;
+        document.getElementById('linkCount').textContent = 0;
+    }
+});
+
+
