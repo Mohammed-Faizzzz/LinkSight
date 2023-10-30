@@ -8,5 +8,7 @@ chrome.runtime.onMessage.addListener((message, sender) => {
         }
         sites[site] = [...new Set([...sites[site], ...message.links])];
         // Save the data to local storage or IndexedDB
+        chrome.storage.local.set({[site]: sites[site]});
     }
 });
+

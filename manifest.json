@@ -3,7 +3,7 @@
     "name": "Hyperlink Logger",
     "version": "1.0",
     "description": "Logs hyperlinks from visited web pages.",
-    "permissions": ["storage", "webNavigation"],
+    "permissions": ["storage", "activeTab", "webNavigation"],
     "background": {
       "service_worker": "background.js"
     },
