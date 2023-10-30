@@ -2,7 +2,6 @@
     "manifest_version": 3,
     "name": "Hyperlink Logger",
     "version": "1.0",
-    "icon": "images/ls.png",
     "description": "Logs hyperlinks from visited web pages.",
     "permissions": ["storage", "activeTab", "webNavigation"],
     "background": {
@@ -15,7 +14,8 @@
       }
     ],
     "action": {
-      "default_popup": "popup.html"
+      "default_popup": "popup.html",
+      "default_icon": "images/ls.png"
     }
   }
   
