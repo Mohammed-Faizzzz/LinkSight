@@ -34,5 +34,24 @@ document.getElementById('resetBtn').addEventListener('click', () => {
     }
 });
 
+document.getElementById('pauseBtn').addEventListener('click', () => {
+    chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
+        // Toggle the tracking state
+        const newState = !isTrackingPaused;
+        
+        chrome.storage.local.set({ 'isTrackingPaused': newState }, () => {
+            if (chrome.runtime.lastError) {
+                console.error("Error toggling tracking state:", chrome.runtime.lastError);
+            } else {
+                console.log("Tracking state toggled successfully");
+                
+                // Update button label according to the new state
+                document.getElementById('pauseBtn').textContent = newState ? "Resume Tracking" : "Pause Tracking";
+            }
+        });
+    });
+});
 
-
+chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
+    document.getElementById('pauseBtn').textContent = isTrackingPaused ? "Resume Tracking" : "Pause Tracking";
+});
