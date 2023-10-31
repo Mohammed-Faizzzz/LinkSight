@@ -1,10 +1,11 @@
 // Fetch the data from chrome.storage.local
 chrome.storage.local.get(null, (results) => {
-    let siteCount = Object.keys(results).length; // Number of unique sites visited
+    let siteCount = 0; // Number of unique sites visited
     let linkCount = 0;
 
     for (let site in results) {
         if (Array.isArray(results[site])) {
+            siteCount ++;
             linkCount += results[site].length;
         }
     }
@@ -53,3 +54,8 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
         });
     });
 });
+
+chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
+    document.getElementById('pauseBtn').textContent = isTrackingPaused ? "Resume Tracking" : "Pause Tracking";
+});
+
