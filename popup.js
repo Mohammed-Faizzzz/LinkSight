@@ -18,16 +18,21 @@ document.getElementById('detailsBtn').addEventListener('click', () => {
 
 document.getElementById('resetBtn').addEventListener('click', () => {
     if (confirm("Are you sure you want to reset all data?")) {
-        chrome.storage.local.remove(["siteCount", "linkCount"], () => {
-            if (chrome.runtime.lastError) {
-                console.error("Error during reset:", chrome.runtime.lastError);
-            } else {
-                console.log("Data reset successfully");
-            }
+        // Extract keys (site URLs) from results and remove them from storage
+        chrome.storage.local.get(null, (results) => {
+            const sitesToRemove = Object.keys(results);
+            chrome.storage.local.remove(sitesToRemove, () => {
+                if (chrome.runtime.lastError) {
+                    console.error("Error during reset:", chrome.runtime.lastError);
+                } else {
+                    console.log("Data reset successfully");
+                    document.getElementById('siteCount').textContent = 0;
+                    document.getElementById('linkCount').textContent = 0;
+                }
+            });
         });
-        document.getElementById('siteCount').textContent = 0;
-        document.getElementById('linkCount').textContent = 0;
     }
 });
+
 
 
