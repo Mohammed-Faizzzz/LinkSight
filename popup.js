@@ -4,7 +4,9 @@ chrome.storage.local.get(null, (results) => {
     let linkCount = 0;
 
     for (let site in results) {
-        linkCount += results[site].length; // Sum of all hyperlinks across sites
+        if (Array.isArray(results[site])) {
+            linkCount += results[site].length;
+        }
     }
 
     document.getElementById('siteCount').textContent = siteCount;
@@ -50,8 +52,4 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
             }
         });
     });
-});
-
-chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
-    document.getElementById('pauseBtn').textContent = isTrackingPaused ? "Resume Tracking" : "Pause Tracking";
 });
