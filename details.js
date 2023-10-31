@@ -15,42 +15,49 @@ chrome.storage.local.get(['visited', 'hyperlinks'], (data) => {
     }
 
     // Data Rows for Visited Sites
-    for (let site in visited) {
-        let row = table.insertRow();
+    // Data Rows for Visited Sites and Hyperlinks
+for (let site in visited) {
+    let row = table.insertRow();
 
-        let siteCell = row.insertCell();
-        let aSite = document.createElement('a');
-        aSite.href = site;
-        aSite.textContent = site;
-        aSite.target = "_blank";
-        siteCell.appendChild(aSite);
+    let siteCell = row.insertCell();
+    let aSite = document.createElement('a');
+    aSite.href = site;
+    aSite.textContent = site;
+    aSite.target = "_blank";
+    siteCell.appendChild(aSite);
 
-        let linkCell = row.insertCell();
-        linkCell.textContent = ''; // No hyperlink for visited sites
-
-        let countCell = row.insertCell();
-        countCell.textContent = ''; // No hyperlink count for visited sites
+    let linkCell = row.insertCell();
+    let firstHyperlink = hyperlinks[site] ? hyperlinks[site][0] : '';
+    if (firstHyperlink) {
+        let aLink = document.createElement('a');
+        aLink.href = firstHyperlink;
+        aLink.textContent = firstHyperlink;
+        aLink.target = "_blank";
+        linkCell.appendChild(aLink);
     }
 
-    // Data Rows for Hyperlinks
-    for (let site in hyperlinks) {
-        for (let link of hyperlinks[site]) {
-            let row = table.insertRow();
+    let countCell = row.insertCell();
+    countCell.textContent = hyperlinks[site] ? hyperlinks[site].length : 0;
 
-            let siteCell = row.insertCell();
-            siteCell.textContent = ''; // No site URL for hyperlinks
+    // Data Rows for Hyperlinks from the same site
+    for (let i = 1; i < hyperlinks[site].length; i++) {
+        let link = hyperlinks[site][i];
+        let hyperlinkRow = table.insertRow();
 
-            let linkCell = row.insertCell();
-            let aLink = document.createElement('a');
-            aLink.href = link;
-            aLink.textContent = link;
-            aLink.target = "_blank";
-            linkCell.appendChild(aLink);
+        let emptySiteCell = hyperlinkRow.insertCell();
+        emptySiteCell.textContent = ''; // No site URL for hyperlinks
 
-            let countCell = row.insertCell();
-            countCell.textContent = ''; // No hyperlink count for hyperlinks
-        }
+        let hyperlinkCell = hyperlinkRow.insertCell();
+        let aLink = document.createElement('a');
+        aLink.href = link;
+        aLink.textContent = link;
+        aLink.target = "_blank";
+        hyperlinkCell.appendChild(aLink);
+
+        let emptyCountCell = hyperlinkRow.insertCell();
+        emptyCountCell.textContent = ''; // No hyperlink count for hyperlinks
     }
+}
 
     // Append table to the container
     document.getElementById('tableContainer').appendChild(table);

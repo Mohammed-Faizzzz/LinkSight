@@ -18,24 +18,19 @@ document.getElementById('detailsBtn').addEventListener('click', () => {
 
 document.getElementById('resetBtn').addEventListener('click', () => {
     if (confirm("Are you sure you want to reset all data?")) {
-        // Extract keys (site URLs) from results and remove them from storage
-        chrome.storage.local.get(['visited', 'hyperlinks'], (data) => {
-            const sitesToRemove = Object.keys(data.visited);
-            const linksToRemove = Object.keys(data.hyperlinks);
-            const keysToRemove = sitesToRemove.concat(linksToRemove);
-
-            chrome.storage.local.remove(keysToRemove, () => {
-                if (chrome.runtime.lastError) {
-                    console.error("Error during reset:", chrome.runtime.lastError);
-                } else {
-                    console.log("Data reset successfully");
-                    document.getElementById('siteCount').textContent = 0;
-                    document.getElementById('linkCount').textContent = 0;
-                }
-            });
+        // Reset the data
+        chrome.storage.local.set({ 'visited': {}, 'hyperlinks': {} }, () => {
+            if (chrome.runtime.lastError) {
+                console.error("Error during reset:", chrome.runtime.lastError);
+            } else {
+                console.log("Data reset successfully");
+                document.getElementById('siteCount').textContent = 0;
+                document.getElementById('linkCount').textContent = 0;
+            }
         });
     }
 });
+
 
 document.getElementById('pauseBtn').addEventListener('click', () => {
     chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
