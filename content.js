@@ -22,11 +22,8 @@ function processLinks() {
 processLinks();
 
 // Monitor dynamically added content
-// Mutation observer should also consider the state
 const observer = new MutationObserver(processLinks);
 observer.observe(document.body, { childList: true, subtree: true });
-
-// contentscript.js
 
 // This function stores links to `chrome.storage.local`
 function addLinkToStorage(site, url) {
@@ -59,4 +56,3 @@ chrome.storage.local.get(hostname, (result) => {
         addLinkToStorage(hostname, a.href);
     });
 });
-

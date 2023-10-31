@@ -12,7 +12,6 @@ chrome.storage.local.get(null, (results) => {
     }
 
     // Data Rows
-    // Data Rows
     let displayedSites = new Set();
     for (let site in results) {
         let linksForSite = results[site];
