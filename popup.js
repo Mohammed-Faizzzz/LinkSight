@@ -1,13 +1,10 @@
 // Fetch the data from chrome.storage.local
-chrome.storage.local.get(null, (results) => {
-    let siteCount = 0; // Number of unique sites visited
+chrome.storage.local.get(['visited', 'hyperlinks'], (data) => {
+    let siteCount = Object.keys(data.visited || {}).length; // Number of unique sites visited
     let linkCount = 0;
 
-    for (let site in results) {
-        if (Array.isArray(results[site])) {
-            siteCount ++;
-            linkCount += results[site].length;
-        }
+    for (let site in data.hyperlinks || {}) {
+        linkCount += data.hyperlinks[site].length;
     }
 
     document.getElementById('siteCount').textContent = siteCount;
@@ -22,9 +19,12 @@ document.getElementById('detailsBtn').addEventListener('click', () => {
 document.getElementById('resetBtn').addEventListener('click', () => {
     if (confirm("Are you sure you want to reset all data?")) {
         // Extract keys (site URLs) from results and remove them from storage
-        chrome.storage.local.get(null, (results) => {
-            const sitesToRemove = Object.keys(results);
-            chrome.storage.local.remove(sitesToRemove, () => {
+        chrome.storage.local.get(['visited', 'hyperlinks'], (data) => {
+            const sitesToRemove = Object.keys(data.visited);
+            const linksToRemove = Object.keys(data.hyperlinks);
+            const keysToRemove = sitesToRemove.concat(linksToRemove);
+
+            chrome.storage.local.remove(keysToRemove, () => {
                 if (chrome.runtime.lastError) {
                     console.error("Error during reset:", chrome.runtime.lastError);
                 } else {
@@ -41,13 +41,13 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
     chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
         // Toggle the tracking state
         const newState = !isTrackingPaused;
-        
+
         chrome.storage.local.set({ 'isTrackingPaused': newState }, () => {
             if (chrome.runtime.lastError) {
                 console.error("Error toggling tracking state:", chrome.runtime.lastError);
             } else {
                 console.log("Tracking state toggled successfully");
-                
+
                 // Update button label according to the new state
                 document.getElementById('pauseBtn').textContent = newState ? "Resume Tracking" : "Pause Tracking";
             }
@@ -58,4 +58,3 @@ document.getElementById('pauseBtn').addEventListener('click', () => {
 chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
     document.getElementById('pauseBtn').textContent = isTrackingPaused ? "Resume Tracking" : "Pause Tracking";
 });
-
