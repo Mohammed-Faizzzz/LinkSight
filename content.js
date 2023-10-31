@@ -14,5 +14,18 @@ function extractLinks() {
 extractLinks();
 
 // Monitor dynamically added content
-const observer = new MutationObserver(extractLinks);
+// Mutation observer should also consider the state
+const observer = new MutationObserver(() => {
+    chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
+        if (!isTrackingPaused) {
+            extractLinks();
+        }
+    });
+});
+
 observer.observe(document.body, { childList: true, subtree: true });
+chrome.storage.local.get('isTrackingPaused', ({ isTrackingPaused }) => {
+    if (!isTrackingPaused) {
+        extractLinks();
+    }
+});
