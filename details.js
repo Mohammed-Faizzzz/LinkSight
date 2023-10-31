@@ -12,30 +12,35 @@ chrome.storage.local.get(null, (results) => {
     }
 
     // Data Rows
+    // Data Rows
+    let displayedSites = new Set();
     for (let site in results) {
-        if (site === 'isTrackingPaused') continue;
-        if (Array.isArray(results[site])) {
-            let linksForSite = results[site];
-            for (let link of linksForSite) {
-                let row = table.insertRow();
-
-                let siteCell = row.insertCell();
-                let aSite = document.createElement('a');
-                aSite.href = "https://" + site; 
-                aSite.textContent = site;
-                aSite.target = "_blank"; 
-                siteCell.appendChild(aSite);
-
-                let linkCell = row.insertCell();
-                let aLink = document.createElement('a');
-                aLink.href = link.url;
-                aLink.textContent = link.url;
-                aLink.target = "_blank";
-                linkCell.appendChild(aLink);
-
-                let countCell = row.insertCell();
-                countCell.textContent = link.count;
+        let linksForSite = results[site];
+        for (let link of linksForSite) {
+            if (displayedSites.has(site)) {
+                continue;
             }
+            let row = table.insertRow();
+
+            let siteCell = row.insertCell();
+            if (!displayedSites.has(site)) {
+                let aSite = document.createElement('a');
+                aSite.href = "https://" + site;
+                aSite.textContent = site;
+                aSite.target = "_blank";
+                siteCell.appendChild(aSite);
+                displayedSites.add(site);
+            }
+
+            let linkCell = row.insertCell();
+            let aLink = document.createElement('a');
+            aLink.href = link.url;
+            aLink.textContent = link.url;
+            aLink.target = "_blank";
+            linkCell.appendChild(aLink);
+
+            let countCell = row.insertCell();
+            countCell.textContent = link.count;
         }
     }
 
