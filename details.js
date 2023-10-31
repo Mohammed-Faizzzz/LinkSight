@@ -1,6 +1,9 @@
-chrome.storage.local.get(null, (results) => {
+chrome.storage.local.get(['visited', 'hyperlinks'], (data) => {
+    let visited = data.visited || {};
+    let hyperlinks = data.hyperlinks || {};
+
     let table = document.createElement('table');
-    
+
     // Headers
     let thead = table.createTHead();
     let headers = ['Visited Sites', 'Hyperlinks', 'Occurrences'];
@@ -11,39 +14,44 @@ chrome.storage.local.get(null, (results) => {
         headerRow.appendChild(th);
     }
 
-    // Data Rows
-    let displayedSites = new Set();
-    for (let site in results) {
-        let linksForSite = results[site];
-        for (let link of linksForSite) {
-            if (displayedSites.has(site)) {
-                continue;
-            }
+    // Data Rows for Visited Sites
+    for (let site in visited) {
+        let row = table.insertRow();
+
+        let siteCell = row.insertCell();
+        let aSite = document.createElement('a');
+        aSite.href = site;
+        aSite.textContent = site;
+        aSite.target = "_blank";
+        siteCell.appendChild(aSite);
+
+        let linkCell = row.insertCell();
+        linkCell.textContent = ''; // No hyperlink for visited sites
+
+        let countCell = row.insertCell();
+        countCell.textContent = ''; // No hyperlink count for visited sites
+    }
+
+    // Data Rows for Hyperlinks
+    for (let site in hyperlinks) {
+        for (let link of hyperlinks[site]) {
             let row = table.insertRow();
 
             let siteCell = row.insertCell();
-            if (!displayedSites.has(site)) {
-                let aSite = document.createElement('a');
-                aSite.href = "https://" + site;
-                aSite.textContent = site;
-                aSite.target = "_blank";
-                siteCell.appendChild(aSite);
-                displayedSites.add(site);
-            }
+            siteCell.textContent = ''; // No site URL for hyperlinks
 
             let linkCell = row.insertCell();
             let aLink = document.createElement('a');
-            aLink.href = link.url;
-            aLink.textContent = link.url;
+            aLink.href = link;
+            aLink.textContent = link;
             aLink.target = "_blank";
             linkCell.appendChild(aLink);
 
             let countCell = row.insertCell();
-            countCell.textContent = link.count;
+            countCell.textContent = ''; // No hyperlink count for hyperlinks
         }
     }
 
     // Append table to the container
     document.getElementById('tableContainer').appendChild(table);
 });
-

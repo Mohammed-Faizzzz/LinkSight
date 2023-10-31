@@ -1,13 +1,22 @@
+let visited = [];
 let hyperlinks = [];
 
 // Extract hyperlinks from a page
 function extractLinks() {
     const links = [...document.querySelectorAll('a[href]')];
+
+    const currentUrl = window.location.href;
+    if (!visited.includes(currentUrl)) {
+        visited.push(currentUrl); // Store the URL of the actively visited website
+    }
+
     for (let link of links) {
-        hyperlinks.push(link.href);
+        if (!hyperlinks.includes(link.href)) {
+            hyperlinks.push(link.href);
+        }
     }
     // Send the links to background.js
-    chrome.runtime.sendMessage({type: "NEW_LINKS", links: hyperlinks});
+    chrome.runtime.sendMessage({ type: "NEW_LINKS", links: hyperlinks });
 }
 
 function processLinks() {
@@ -31,9 +40,9 @@ function addLinkToStorage(site, url) {
 
     chrome.storage.local.get(hostname, (result) => {
         let linksForSite = result[hostname] || [];
-        
+
         let existingLink = linksForSite.find(link => link.url === url);
-        
+
         if (existingLink) {
             existingLink.count += 1;
         } else {
@@ -51,7 +60,7 @@ let hostname = new URL(window.location.href).hostname;
 
 chrome.storage.local.get(hostname, (result) => {
     let linksForSite = result[hostname] || [];
-    
+
     document.querySelectorAll('a[href]').forEach((a) => {
         addLinkToStorage(hostname, a.href);
     });
